@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2 style="margin-left: 1rem">Categories</h2>
+
+        
+        <div class="row ml-3">
+            {% for category in categories %}
+                <div class="col-lg-4 mt-4">
+                    <form action="{% url 'listings_category' category %}">
+                        <button type="submit" class="btn btn-outline-dark" style="width: 500px">{{ category }}</button>
+                    </form>
+                    
+                </div>
+                {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                    </div><div class="row ml-3">
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    
+{% endblock %}

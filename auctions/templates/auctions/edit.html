@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2 style="margin-left: 1rem">Edit Listing</h2>
+
+    <form action="{% url 'edit' listing.id %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3 mt-3">
+          <label for="title" class="form-label">Title:</label>
+          <input type="text" class="form-control" id="title" value="{{ listing.title }}" name="title" maxlength="100">
+        </div>
+        <div class="mb-3">
+          <label for="desc" class="form-label">Description:</label>
+          <textarea class="form-control" rows="5" id="comment" name="desc" maxlength="100"would>{{ listing.desc }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="photo_url" class="form-label">Photo URL:</label>
+            <input type="text" class="form-control" value="{{ listing.photo_url }}" name="photo_url" maxlength="100">
+        </div>
+        <div class="mb-3">
+            <label for="category" class="form-label">Category:</label>
+            <select class="form-control" name="category">
+                <option value="{{ listing.category.id }}" >{{ listing.category }}</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}

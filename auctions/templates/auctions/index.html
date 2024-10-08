@@ -1,0 +1,44 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2 style="margin-left: 1rem">{{ title }}</h2>
+
+    <ul>
+        <div class="row">
+        {% for listing in listings %}
+            <div class="col-md-3" style="margin-top: 50px">
+                <div class="card" style="width:400px; height: 1000px">
+                    {% if listing.photo_url %}
+                    <img class="card-img-top" src="{{ listing.photo_url }}" alt="Card image" style="width: auto; height: 60%">
+                    {% else %}
+                    <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h4 class="card-title">{{ listing.title }}</h4>
+                        <p class="card-text">{{ listing.desc }}</p>
+                        <form action="{% url 'item' listing.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="id" value="{{ listing.id }}">                            
+                            <input type="hidden" name="title" value="{{ listing.title }}">
+                            <input type="hidden" name="description" value="{{ listing.desc }}">
+                            <input type="hidden" name="photo_url" value="{{ listing.photo_url }}">   
+                            <input type="hidden" name="startingBid" value="{{ listing.startingBid }}">   
+                            <input type="hidden" name="highestBid" value="{{ listing.highestBid }}">   
+                            <input type="hidden" name="category" value="{{ listing.category }}">   
+                            <input type="hidden" name="owner" value="{{ listing.owner }}">   
+                            <input type="hidden" name="watchlisted_by" value="{{ listing.watchlisted_by }}">   
+                            <input type="hidden" name="action" value="view_listing">   
+                            <button type="submit" name="action" value ="view_listing" class="btn btn-primary mt-auto align-self-start">View</button>
+                        </form>
+                    </div>
+            </div>
+            </div>
+        {% empty %}
+            <li style="margin-left:20px">No active listings</li>
+        {% endfor %}
+        </div>
+    </ul>
+{% endblock %}
+
+

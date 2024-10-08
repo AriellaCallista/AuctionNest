@@ -1,0 +1,149 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    {% if messages %}
+    <div>
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success 
+                          {% elif message.tags == 'error' %}alert-danger 
+                          {% endif %}" role="alert">
+            {{ message }}
+            </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-3 mt-5 ml-5">
+            {% if listing.photo_url %}
+                <img class="card-img-top" src="{{ listing.photo_url }}" alt="Card image">
+            {% else %}
+                <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image">
+            {% endif %}
+
+            {% if listing.isActive %}
+            <div class="row offset-2 mt-3">
+                {% if request.user == listing.owner %}
+                    <form action="{% url 'edit' listing.id %}">
+                        <button class="btn btn-outline-primary d-flex flex-row mr-2">Edit Listing</button>
+                    </form>
+        
+                    <form action="{% url 'close' listing.id %}">
+                        <button class="btn btn-outline-secondary d-flex flex-row mx-2">Close Listing</button>
+                    </form>
+                {% else %}
+                    {% if watchlisted %}
+                    <form action="{% url 'remove_from_watchlist' listing.id %}">
+                        <button id="watchlistButton" class="btn btn-danger d-flex flex-row mx-2">
+                            <i class="bi bi-heart mr-2"></i>
+                            Watchlist
+                        </button>   
+                    </form>   
+
+                    {% else %}
+                    <form action="{% url 'add_to_watchlist' listing.id %}">
+                        <button id="watchlistButton" class="btn btn-outline-danger d-flex flex-row mx-2">
+                            <i class="bi bi-heart mr-2"></i>
+                            Watchlist
+                        </button>   
+                    </form>   
+                    {% endif %}   
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-5 mt-5 ml-3">  
+            <button class="btn btn-warning mb-3">{{listing.category}}</button>
+            <h2>{{ listing.title }}</h2>
+            <p>{{ listing.desc }}</p>
+
+            <p style="margin-top: 0.5em; font-weight: bold;">Created by: {{listing.owner.username}}</p>
+            <p style="margin-top: 0.5em; font-weight: bold;">Starting Bid: {{listing.startingBid}}</p>
+            <p style="margin-top: 0.5em; font-weight: bold">Highest Bid:</p>
+            <h1 style="font-size: 3rem; margin-top: -12px;">{{ listing.highestBid }}</h2>  
+
+            {% if listing.isActive %}
+            
+                {% if request.user != listing.owner %}
+                <form action="{% url 'bid' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3 mt-3">
+                        <label for="bid" class="form-label">Place Your Bid:</label>
+                        <input type="number" class="form-control" name="bid" step="any">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Bid</button>
+                </form>
+                {% endif %}
+
+            {% else %}
+            {% if listing.winner == request.user %}
+            <div class="alert alert-success">
+                Congrats! You've won this listing.
+            </div>
+            {% endif %}
+            <div class="alert alert-secondary">
+                This listing is closed  
+            </div>
+
+            {% endif %}
+
+
+        </div>
+    </div>
+
+    <h2 style="margin-top: 2rem">Comments</h2>
+
+    {% for comment in comments %}
+        <div class="card mt-4">
+            <div class="card-body" >
+                <p>{{ comment.commenter }} commented at {{ comment.created_at }}</p>
+                <p>{{ comment.text }}</p>
+                <p>{{ id }} </p>
+            </div>
+        </div>
+    {% endfor %}
+
+    <form action="{% url 'comment' listing.id %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3 mt-4">
+          <label for="comment">Enter your comment:</label>
+          <textarea class="form-control" rows="2" id="comment" name="comment"></textarea>
+        </div>
+                            
+        <button type="submit" class="btn btn-primary ml-4">Submit</button>
+    </form>
+
+    <script>
+
+            
+
+        const container = document.getElementById('confetti-container');
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            
+            // Randomize position across the screen
+            confetti.style.left = `${Math.random() * 100}%`;
+            
+            // Add confetti to container
+            container.appendChild(confetti);
+            
+            // Remove confetti after animation ends
+            confetti.addEventListener('animationend', () => {
+                confetti.remove();
+            });
+        }
+
+        setInterval(createConfetti, 500);
+
+      
+    
+    </script>
+    
+{% endblock %}
+
+
+

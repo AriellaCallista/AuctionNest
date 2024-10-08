@@ -1,0 +1,50 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2 style="margin-left: 1rem">Create Listing</h2>
+
+    {% if success %}
+    <div class="alert alert-success">
+        <strong>{{ success }}</strong> 
+    </div>
+
+    {% elif failure %}
+
+    <div class="alert alert-danger">
+        <strong>{{ failure }}</strong> 
+    </div>
+
+    {% endif %}
+
+    <form action="{% url 'create' %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3 mt-3 ml-4 mr-5">
+          <label for="title" class="form-label">Title*:</label>
+          <input type="text" class="form-control" id="title" name="title">
+        </div>
+        <div class="mb-3 ml-4 mr-5">
+          <label for="desc" class="form-label">Description*:</label>
+          <textarea class="form-control" rows="5" id="comment" name="desc"></textarea>
+        </div>
+        <div class="mb-3 ml-4 mr-5">
+            <label for="category" class="form-label">Starting Bid*:</label>
+            <input type="number" class="form-control" name="starting_bid" step="any">
+        </div>
+        <div class="mb-3 ml-4 mr-5">
+            <label for="photo_url" class="form-label">Photo URL:</label>
+            <input type="text" class="form-control" name="photo_url">
+        </div>
+
+        <div class="mb-3 ml-4 mr-5">
+            <label for="category" class="form-label">Category:</label>
+            <select class="form-control" name="category">
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary ml-4 mr-5">Submit</button>
+    </form>
+
+    
+{% endblock %}
